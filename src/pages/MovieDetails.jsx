@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { fetchMovieDetails, fetchWatchProviders, fetchMovieCredits, fetchMovieVideos, imgBaseUrl } from '../services/tmdb';
+import { useSearchParams, Link } from 'react-router-dom';
+import { fetchMovieDetails, fetchWatchProviders, fetchMovieCredits, fetchMovieVideos, fetchRecommendations, imgBaseUrl } from '../services/tmdb';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useWishlist } from '../hooks/useWishlist';
+import ActorCard from '../components/ActorCard';
+import MovieCard from '../components/MovieCard';
 
 export default function MovieDetails() {
     const [searchParams] = useSearchParams();
@@ -11,7 +13,8 @@ export default function MovieDetails() {
         movie: null,
         providers: [],
         cast: [],
-        videos: []
+        videos: [],
+        recommendations: []
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,17 +30,18 @@ export default function MovieDetails() {
             }
 
             try {
-                const [movie, providers, cast, videos] = await Promise.all([
+                const [movie, providers, cast, videos, recommendations] = await Promise.all([
                     fetchMovieDetails(movieId),
                     fetchWatchProviders(movieId),
                     fetchMovieCredits(movieId),
-                    fetchMovieVideos(movieId)
+                    fetchMovieVideos(movieId),
+                    fetchRecommendations(movieId)
                 ]);
 
                 if (!movie) {
                     setError('Could not find details for this movie.');
                 } else {
-                    setData({ movie, providers, cast, videos });
+                    setData({ movie, providers, cast, videos, recommendations });
                 }
             } catch (err) {
                 console.error(err);
@@ -52,7 +56,7 @@ export default function MovieDetails() {
     if (isLoading) return <div className="page-wrapper flex justify-center items-center"><LoadingSpinner /></div>;
     if (error) return <div className="page-wrapper flex justify-center items-center text-secondary">{error}</div>;
 
-    const { movie, providers, cast, videos } = data;
+    const { movie, providers, cast, videos, recommendations } = data;
     const title = movie.title || 'Title not available';
     const tagline = movie.tagline || '';
     const overview = movie.overview || 'No overview available.';
@@ -116,13 +120,7 @@ export default function MovieDetails() {
                 <h4 className="info-section-title">Cast</h4>
                 <div className="cast-grid">
                     {cast.slice(0, 12).map((c, index) => (
-                        <div key={index} className="cast-member">
-                            <img src={c.profile_path ? `${imgBaseUrl}${c.profile_path}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=333333&color=ffffff&size=150`} alt={c.name} className="cast-photo" />
-                            <div className="cast-info">
-                                <p className="cast-name-text" title={c.name}>{c.name}</p>
-                                <p className="cast-character-text" title={c.character}>{c.character}</p>
-                            </div>
-                        </div>
+                        <ActorCard key={index} actor={c} />
                     ))}
                 </div>
 
@@ -143,6 +141,22 @@ export default function MovieDetails() {
                         <p className="text-secondary">No official trailers or teasers available.</p>
                     )}
                 </div>
+
+                {recommendations && recommendations.length > 0 && (
+                    <>
+                        <h4 className="info-section-title" style={{ marginTop: '3rem' }}>Similar Movies</h4>
+                        <div className="movie-grid" style={{ marginBottom: '4rem' }}>
+                            {recommendations.slice(0, 12).map((rec, index) => (
+                                <MovieCard 
+                                    key={rec.id} 
+                                    movie={rec} 
+                                    isWishlisted={isInWishlist(rec.id)}
+                                    onToggleWishlist={toggleWishlist}
+                                />
+                            ))}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

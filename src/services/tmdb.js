@@ -29,8 +29,9 @@ export async function fetchTopRatedMovies() {
 }
 
 export async function fetchSearchResults(query) {
-    const data = await apiRequest(`/search/movie?query=${encodeURIComponent(query)}`, 'Failed to fetch search results');
-    return data ? data.results : [];
+    const data = await apiRequest(`/search/multi?query=${encodeURIComponent(query)}`, 'Failed to fetch search results');
+    // Filter out TV shows and other media types we aren't supporting right now
+    return data ? data.results.filter(item => item.media_type === 'movie' || item.media_type === 'person') : [];
 }
 
 export async function fetchPopularMovies(page = 1) {
@@ -52,10 +53,21 @@ export async function fetchMovieCredits(movieId) {
     const data = await apiRequest(`/movie/${movieId}/credits`, 'Could not fetch movie credits');
     if (!data) return [];
     return data.cast.map(c => ({
+        id: c.id,
         name: c.name,
         character: c.character,
         profile_path: c.profile_path
     }));
+}
+
+export async function fetchActorDetails(actorId) {
+    return await apiRequest(`/person/${actorId}`, `Could not fetch details for actor ${actorId}`);
+}
+
+export async function fetchActorMovies(actorId) {
+    const data = await apiRequest(`/person/${actorId}/movie_credits`, `Could not fetch movies for actor ${actorId}`);
+    // Return cast roles, sorted by popularity descending
+    return data && data.cast ? data.cast.sort((a, b) => b.popularity - a.popularity) : [];
 }
 
 export async function fetchMovieVideos(movieId) {

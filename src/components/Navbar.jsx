@@ -62,11 +62,15 @@ export default function Navbar() {
         }
     };
 
-    const handleSelectMovie = (id) => {
+    const handleSelect = (id, type) => {
         setShowDropdown(false);
         setIsSearchOpen(false);
         setQuery('');
-        navigate(`/movie-details?id=${id}`);
+        if (type === 'person') {
+            navigate(`/actor-details?id=${id}`);
+        } else {
+            navigate(`/movie-details?id=${id}`);
+        }
     };
 
     const isActive = (path) => location.pathname === path ? 'active' : '';
@@ -164,7 +168,7 @@ export default function Navbar() {
                                 autoFocus
                                 type="search"
                                 className="global-search-input"
-                                placeholder="Search movies, TV shows, and more..."
+                                placeholder="Search movies, actors, and more..."
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                             />
@@ -182,21 +186,29 @@ export default function Navbar() {
                             </div>
                         ) : results.length > 0 ? (
                             <ul className="search-results-list" style={{ position: 'relative', top: 0, boxShadow: 'none', background: 'transparent' }}>
-                                {results.map(movie => (
-                                    <li key={movie.id} className="search-result-item" onClick={() => handleSelectMovie(movie.id)} style={{ padding: '0.75rem 0' }}>
-                                        <img src={movie.poster_path ? `${imgBaseUrl}${movie.poster_path}` : 'https://via.placeholder.com/70x105'} alt="" className="search-result-img" />
-                                        <div className="search-result-info">
-                                            <div className="search-result-title" style={{ fontSize: '1.2rem' }}>{movie.title}</div>
-                                            <div className="search-result-year" style={{ fontSize: '0.9rem', color: 'var(--accent-gold)' }}>{movie.release_date ? movie.release_date.split('-')[0] : 'N/A'}</div>
-                                        </div>
-                                    </li>
-                                ))}
+                                {results.map(item => {
+                                    const isPerson = item.media_type === 'person';
+                                    const imgPath = isPerson ? item.profile_path : item.poster_path;
+                                    const title = isPerson ? item.name : item.title;
+                                    const subtitle = isPerson ? item.known_for_department : (item.release_date ? item.release_date.split('-')[0] : 'N/A');
+                                    const imgSrc = imgPath ? `${imgBaseUrl}${imgPath}` : 'https://via.placeholder.com/70x105';
+                                    
+                                    return (
+                                        <li key={item.id} className="search-result-item" onClick={() => handleSelect(item.id, item.media_type)} style={{ padding: '0.75rem 0' }}>
+                                            <img src={imgSrc} alt="" className="search-result-img" style={isPerson ? { borderRadius: '50%', objectFit: 'cover' } : {}} />
+                                            <div className="search-result-info">
+                                                <div className="search-result-title" style={{ fontSize: '1.2rem' }}>{title}</div>
+                                                <div className="search-result-year" style={{ fontSize: '0.9rem', color: 'var(--accent-gold)' }}>{subtitle}</div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
                                 <li className="search-result-footer" onClick={() => handleSearch()} style={{ background: 'transparent', paddingLeft: 0, paddingRight: 0 }}>
                                     <button className="btn-secondary w-100 mt-2">See all results</button>
                                 </li>
                             </ul>
                         ) : query.trim() ? (
-                            <div className="p-4 text-center text-secondary">No movies found for "{query}".</div>
+                            <div className="p-4 text-center text-secondary">No results found for "{query}".</div>
                         ) : (
                             <div className="p-4 text-center text-secondary" style={{ opacity: 0.7, marginTop: '10vh' }}>
                                 <i className="bi bi-search" style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem', color: 'var(--border-color)' }}></i>

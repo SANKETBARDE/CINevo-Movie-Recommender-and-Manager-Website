@@ -14,6 +14,7 @@ import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
 import Onboarding from './pages/Onboarding';
 import Profile from './pages/Profile';
+import ActorDetails from './pages/ActorDetails';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import { useAuth } from './context/AuthContext';
@@ -84,6 +85,7 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/movie-details" element={<MovieDetails />} />
+                <Route path="/actor-details" element={<ActorDetails />} />
                 <Route path="/recommended" element={<Recommended />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/wishlist" element={<Wishlist />} />

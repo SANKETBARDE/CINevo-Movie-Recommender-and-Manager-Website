@@ -747,6 +747,12 @@ a:hover {
   overflow: hidden;
   border: 1px solid var(--border-color);
   text-align: center;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  display: block; /* Important since it's now an inline element like <a> */
+}
+.cast-member:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-gold);
 }
 .cast-photo {
   width: 100%;
