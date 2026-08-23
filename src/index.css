@@ -772,13 +772,20 @@ a:hover {
   text-overflow: ellipsis;
 }
 .videos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  overflow-x: auto;
   gap: 2rem;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.videos-grid::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
 }
 .video-wrapper {
+  flex: 0 0 calc(50% - 1rem);
+  min-width: 300px;
   position: relative;
-  padding-bottom: 56.25%;
+  aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border-color);

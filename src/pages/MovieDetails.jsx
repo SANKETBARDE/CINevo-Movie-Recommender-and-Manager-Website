@@ -129,7 +129,7 @@ export default function MovieDetails() {
                 <h4 className="info-section-title">Related Videos</h4>
                 <div className="videos-grid">
                     {videos.length > 0 ? (
-                        videos.slice(0, 2).map(video => (
+                        videos.slice(0, 10).map(video => (
                             <div key={video.key} className="video-wrapper">
                                 <iframe src={`https://www.youtube.com/embed/${video.key}`} 
                                         title={video.name} 
