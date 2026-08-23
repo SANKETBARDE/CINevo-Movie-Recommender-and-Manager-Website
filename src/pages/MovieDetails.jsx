@@ -117,7 +117,7 @@ export default function MovieDetails() {
                 <div className="cast-grid">
                     {cast.slice(0, 12).map((c, index) => (
                         <div key={index} className="cast-member">
-                            <img src={c.profile_path ? `${imgBaseUrl}${c.profile_path}` : 'https://via.placeholder.com/150'} alt={c.name} className="cast-photo" />
+                            <img src={c.profile_path ? `${imgBaseUrl}${c.profile_path}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=333333&color=ffffff&size=150`} alt={c.name} className="cast-photo" />
                             <div className="cast-info">
                                 <p className="cast-name-text" title={c.name}>{c.name}</p>
                                 <p className="cast-character-text" title={c.character}>{c.character}</p>

@@ -54,7 +54,7 @@ export async function fetchMovieCredits(movieId) {
     return data.cast.map(c => ({
         name: c.name,
         character: c.character,
-        profile_path: c.profile_path ? `${imgBaseUrl}${c.profile_path}` : 'https://via.placeholder.com/100x150.png?text=No+Image'
+        profile_path: c.profile_path
     }));
 }
 
