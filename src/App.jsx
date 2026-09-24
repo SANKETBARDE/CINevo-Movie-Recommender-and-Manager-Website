@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import ActorDetails from './pages/ActorDetails';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import AndroidDownload from './pages/AndroidDownload';
 import { useAuth } from './context/AuthContext';
 
 function ScrollToTop() {
@@ -73,6 +74,7 @@ function App() {
                       <Routes>
                           <Route path="/" element={<Landing />} />
                           <Route path="/signin" element={<SignIn />} />
+                          <Route path="/android-download" element={<AndroidDownload />} />
                           <Route path="/terms" element={<Terms />} />
                           <Route path="/privacy" element={<Privacy />} />
                           <Route path="*" element={<Navigate to="/" replace />} />

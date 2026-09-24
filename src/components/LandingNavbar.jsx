@@ -16,8 +16,8 @@ export default function LandingNavbar() {
                     <Link to="/signin" className="btn-secondary" style={{ padding: '0.4rem 1rem', fontSize: '0.875rem' }}>
                         Sign In
                     </Link>
-                    <Link to="/signin?mode=signup" className="btn-primary" style={{ padding: '0.4rem 1rem', fontSize: '0.875rem' }}>
-                        Get Started
+                    <Link to="/android-download" className="btn-primary" style={{ padding: '0.4rem 1rem', fontSize: '0.875rem' }}>
+                        Download App
                     </Link>
                 </div>
             </div>
