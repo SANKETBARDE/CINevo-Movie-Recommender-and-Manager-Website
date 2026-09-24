@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, query, collection, where, getDocs } from 'firebase/firestore';
 
 const GENRES = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western"];
 
@@ -14,6 +14,17 @@ export default function Profile() {
         favoriteGenres: userProfile?.favoriteGenres || []
     });
     const [isSaving, setIsSaving] = useState(false);
+
+    // Update form data when userProfile changes (real-time sync)
+    useEffect(() => {
+        if (userProfile && !isEditing) {
+            setFormData({
+                username: userProfile.username || user?.displayName || '',
+                bio: userProfile.bio || '',
+                favoriteGenres: userProfile.favoriteGenres || []
+            });
+        }
+    }, [userProfile, isEditing, user?.displayName]);
 
     const toggleGenre = (genre) => {
         setFormData(prev => {
@@ -31,15 +42,63 @@ export default function Profile() {
         e.preventDefault();
         setIsSaving(true);
         try {
-            const userRef = doc(db, 'users', user.uid);
-            await setDoc(userRef, {
+            console.log("Current user:", user);
+            console.log("User UID:", user?.uid);
+            console.log("User email:", user?.email);
+            
+            // Try to find the correct document ID first
+            let userDocId = user?.uid;
+            
+            // First try to find by email to ensure we use the correct document
+            try {
+                const q = query(collection(db, 'users'), where('email', '==', user?.email));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    const userDoc = querySnapshot.docs[0];
+                    userDocId = userDoc.id;
+                    console.log("Found user document by email, using ID:", userDocId);
+                } else {
+                    console.log("No document found by email, using UID:", userDocId);
+                }
+            } catch (error) {
+                console.error("Error finding user by email:", error);
+                console.log("Falling back to UID:", userDocId);
+            }
+            
+            if (!userDocId) {
+                console.error("No user document ID available");
+                alert("User not authenticated properly. Please log in again.");
+                return;
+            }
+            
+            const userRef = doc(db, 'users', userDocId);
+            console.log("Attempting to save to document:", userRef.path);
+            
+            const saveData = {
                 username: formData.username,
                 bio: formData.bio,
                 favoriteGenres: formData.favoriteGenres,
-            }, { merge: true });
+                displayName: user?.displayName || formData.username,
+                photoURL: user?.photoURL,
+                email: user?.email,
+                uid: user?.uid,
+                updatedAt: new Date().toISOString(),
+                isProfileComplete: true
+            };
+            
+            console.log("Data to save:", saveData);
+            
+            await setDoc(userRef, saveData, { merge: true });
+            
+            console.log("Profile saved successfully to Firestore");
+            console.log("Document updated at:", new Date().toISOString());
             setIsEditing(false);
         } catch (error) {
-            console.error("Error updating profile", error);
+            console.error("Error updating profile:", error);
+            console.error("Error code:", error.code);
+            console.error("Error message:", error.message);
+            console.error("Full error:", error);
+            alert(`Failed to save profile: ${error.message}. Please try again.`);
         } finally {
             setIsSaving(false);
         }
@@ -67,133 +126,206 @@ export default function Profile() {
     };
 
     return (
-        <div className="page-wrapper animate-fade-in-up profile-page-wrapper" style={{ padding: '4rem 1rem', marginTop: '80px', flexGrow: 1 }}>
-            <div className="container">
-                <div className="profile-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                    <h1 className="section-title" style={{ margin: 0 }}>My Profile</h1>
-                    {!isEditing && (
-                        <button onClick={() => setIsEditing(true)} className="btn-secondary edit-profile-btn" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 'fit-content', padding: '0.5rem 1.5rem' }}>
-                            <i className="bi bi-pencil" style={{ marginRight: '0.5rem' }}></i> Edit Profile
-                        </button>
-                    )}
-                </div>
-
-                <div className="profile-content-container" style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                    
-                    {/* Top Section - Profile Summary */}
-                    <div className="profile-summary" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
-                        <div style={{ position: 'relative', marginBottom: '1.5rem' }}>
-                            <img 
-                                src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.username || user?.displayName || 'Cinephile')}&background=random`} 
-                                alt="Profile" 
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.username || user?.displayName || 'Cinephile')}&background=random`;
-                                }}
-                                style={{ width: '120px', height: '120px', borderRadius: '50%', border: '3px solid var(--accent-gold)', objectFit: 'cover', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}
-                            />
+        <div className="page-wrapper animate-fade-in-up profile-page-wrapper" style={{ marginTop: '80px', flexGrow: 1 }}>
+            {/* Hero Section */}
+            <div className="profile-hero-section">
+                <div className="profile-hero-background"></div>
+                <div className="container">
+                    <div className="profile-hero-content">
+                        <div className="profile-hero-main">
+                            <div className="profile-avatar-container">
+                                <img 
+                                    src={user?.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.username || user?.displayName || 'Cinephile')}&background=random`} 
+                                    alt="Profile" 
+                                    className="profile-avatar"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(userProfile?.username || user?.displayName || 'Cinephile')}&background=random`;
+                                    }}
+                                />
+                                <div className="profile-avatar-glow"></div>
+                            </div>
+                            <div className="profile-hero-info">
+                                <h1 className="profile-hero-name">{userProfile?.username || user?.displayName || 'Cinephile'}</h1>
+                                <p className="profile-hero-email">{user?.email}</p>
+                                <div className="profile-hero-meta">
+                                    <span className="profile-hero-status">
+                                        {userProfile?.isProfileComplete ? (
+                                            <span className="profile-status-complete">
+                                                <i className="bi bi-check-circle"></i> Profile Complete
+                                            </span>
+                                        ) : (
+                                            <span className="profile-status-incomplete">
+                                                <i className="bi bi-exclamation-circle"></i> Complete your profile
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span className="profile-hero-date">
+                                        Member since {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : 'Recently'}
+                                    </span>
+                                </div>
+                                <div className="profile-hero-bio-preview">
+                                    {userProfile?.bio || 'No bio yet'}
+                                </div>
+                            </div>
                         </div>
-                        <h2 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700 }}>{userProfile?.username || user?.displayName || 'Cinephile'}</h2>
-                        <p style={{ color: 'var(--text-secondary)', margin: '0.5rem 0 0' }}>{user?.email}</p>
+                        {!isEditing && (
+                            <button onClick={() => setIsEditing(true)} className="profile-edit-btn">
+                                <i className="bi bi-pencil"></i>
+                                <span>Edit Profile</span>
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="container">
+                <div className="profile-content-grid">
+                    {/* Stats Section */}
+                    <div className="profile-stats-section">
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon">
+                                <i className="bi bi-film"></i>
+                            </div>
+                            <div className="profile-stat-content">
+                                <div className="profile-stat-value">{userProfile?.moviesWatched?.length || 0}</div>
+                                <div className="profile-stat-label">Movies Watched</div>
+                            </div>
+                        </div>
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon">
+                                <i className="bi bi-heart"></i>
+                            </div>
+                            <div className="profile-stat-content">
+                                <div className="profile-stat-value">{userProfile?.favorites?.length || 0}</div>
+                                <div className="profile-stat-label">Favorites</div>
+                            </div>
+                        </div>
+                        <div className="profile-stat-card">
+                            <div className="profile-stat-icon">
+                                <i className="bi bi-bookmark"></i>
+                            </div>
+                            <div className="profile-stat-content">
+                                <div className="profile-stat-value">{userProfile?.wishlist?.length || 0}</div>
+                                <div className="profile-stat-label">Watchlist</div>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Bottom Content - Details or Edit Form */}
-                    <div>
+                    {/* Main Content */}
+                    <div className="profile-main-content">
                         {isEditing ? (
-                            <form onSubmit={handleSave} className="animate-fade-in-up">
-                                <h3 style={{ marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>Edit Details</h3>
-                                
-                                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-                                    <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>Display Name</label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        value={formData.username}
-                                        onChange={(e) => setFormData({...formData, username: e.target.value})}
-                                        style={{ width: '100%', padding: '0.85rem', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'white', fontSize: '1rem' }}
-                                    />
+                            <div className="profile-edit-card glass-card">
+                                <div className="profile-card-header">
+                                    <h2>Edit Profile</h2>
+                                    <button onClick={() => setIsEditing(false)} className="profile-close-btn">
+                                        <i className="bi bi-x-lg"></i>
+                                    </button>
                                 </div>
-                                <div className="form-group" style={{ marginBottom: '2rem' }}>
-                                    <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>About Me</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        value={formData.bio}
-                                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                                        rows="4"
-                                        style={{ width: '100%', padding: '0.85rem', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'white', resize: 'vertical', fontSize: '1rem' }}
-                                    ></textarea>
-                                </div>
-                                <div className="form-group" style={{ marginBottom: '3rem' }}>
-                                    <label style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', marginBottom: '1rem', fontWeight: 600 }}>
-                                        Favorite Genres
-                                        <span style={{ fontSize: '0.85rem', color: 'var(--accent-gold)' }}>{formData.favoriteGenres.length}/3 Selected</span>
-                                    </label>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
-                                        {GENRES.map(genre => (
-                                            <button 
-                                                type="button"
-                                                key={genre}
-                                                onClick={() => toggleGenre(genre)}
-                                                style={{ 
-                                                    background: formData.favoriteGenres.includes(genre) ? 'var(--accent-gold)' : 'rgba(255,255,255,0.05)',
-                                                    color: formData.favoriteGenres.includes(genre) ? 'black' : 'var(--text-secondary)',
-                                                    border: formData.favoriteGenres.includes(genre) ? '1px solid var(--accent-gold)' : '1px solid rgba(255,255,255,0.1)',
-                                                    padding: '0.5rem 1rem',
-                                                    borderRadius: '25px',
-                                                    fontSize: '0.9rem',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.2s ease',
-                                                    fontWeight: formData.favoriteGenres.includes(genre) ? 600 : 400
-                                                }}
-                                            >
-                                                {genre}
-                                            </button>
-                                        ))}
+                                <form onSubmit={handleSave}>
+                                    <div className="profile-form-group">
+                                        <label>Display Name</label>
+                                        <input 
+                                            type="text" 
+                                            className="profile-form-input"
+                                            value={formData.username}
+                                            onChange={(e) => setFormData({...formData, username: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="profile-form-group">
+                                        <label>About Me</label>
+                                        <textarea 
+                                            className="profile-form-textarea"
+                                            value={formData.bio}
+                                            onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                                            rows="4"
+                                        ></textarea>
+                                    </div>
+                                    <div className="profile-form-group">
+                                        <div className="profile-genre-header">
+                                            <label>Favorite Genres</label>
+                                            <span className="profile-genre-count">{formData.favoriteGenres.length}/3 Selected</span>
+                                        </div>
+                                        <div className="profile-genre-grid">
+                                            {GENRES.map(genre => (
+                                                <button 
+                                                    type="button"
+                                                    key={genre}
+                                                    onClick={() => toggleGenre(genre)}
+                                                    className={`profile-genre-chip ${formData.favoriteGenres.includes(genre) ? 'active' : ''}`}
+                                                >
+                                                    {genre}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="profile-form-actions">
+                                        <button type="button" onClick={() => setIsEditing(false)} className="profile-btn profile-btn-secondary">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" disabled={isSaving} className="profile-btn profile-btn-primary">
+                                            {isSaving ? 'Saving...' : 'Save Changes'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        ) : (
+                            <div className="profile-view-content">
+                                <div className="profile-section glass-card">
+                                    <div className="profile-section-header">
+                                        <h2>About Me</h2>
+                                    </div>
+                                    <div className="profile-section-body">
+                                        <p className="profile-bio-text">
+                                            {userProfile?.bio || 'This user hasn\'t added a bio yet.'}
+                                        </p>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1.5rem' }}>
-                                    <button type="button" onClick={() => setIsEditing(false)} className="btn-secondary" style={{ background: 'transparent', padding: '0.75rem 1.5rem' }}>Cancel</button>
-                                    <button type="submit" disabled={isSaving} className="btn-primary" style={{ padding: '0.75rem 2rem', borderRadius: '50px', fontWeight: 600 }}>
-                                        {isSaving ? 'Saving...' : 'Save Changes'}
-                                    </button>
-                                </div>
-                            </form>
-                        ) : (
-                            <div className="animate-fade-in-up">
-                                <h3 style={{ marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>About Me</h3>
-                                <div style={{ marginBottom: '3rem' }}>
-                                    <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: 'rgba(255,255,255,0.9)' }}>
-                                        {userProfile?.bio || 'This user hasn\'t added a bio yet.'}
-                                    </p>
-                                </div>
-                                
-                                <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>Favorite Genres</h3>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                                    {userProfile?.favoriteGenres?.length > 0 ? (
-                                        userProfile.favoriteGenres.map(genre => (
-                                            <span key={genre} style={{ 
-                                                background: 'rgba(245, 197, 24, 0.1)', 
-                                                padding: '0.5rem 1.25rem', 
-                                                borderRadius: '25px', 
-                                                border: '1px solid rgba(245, 197, 24, 0.3)', 
-                                                color: 'var(--accent-gold)',
-                                                fontWeight: 500,
-                                                letterSpacing: '0.5px'
-                                            }}>
-                                                {genre}
-                                            </span>
-                                        ))
-                                    ) : (
-                                        <p style={{ color: 'var(--text-tertiary)' }}>No favorite genres selected.</p>
-                                    )}
+
+                                <div className="profile-section glass-card">
+                                    <div className="profile-section-header">
+                                        <h2>Favorite Genres</h2>
+                                    </div>
+                                    <div className="profile-section-body">
+                                        <div className="profile-genre-display">
+                                            {userProfile?.favoriteGenres?.length > 0 ? (
+                                                userProfile.favoriteGenres.map(genre => (
+                                                    <span key={genre} className="profile-genre-tag">
+                                                        {genre}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                <p className="profile-empty-state">No favorite genres selected.</p>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div className="sign-out-container" style={{ marginTop: '3rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem', display: 'flex', justifyContent: 'flex-start', gap: '1rem', flexWrap: 'wrap' }}>
-                                    <button onClick={logout} className="btn-secondary sign-out-btn" style={{ width: 'fit-content', padding: '0.75rem 2rem' }}>
-                                        <i className="bi bi-box-arrow-right" style={{ marginRight: '0.5rem' }}></i> Sign Out
+                                {userProfile?.wishlist && userProfile.wishlist.length > 0 && (
+                                    <div className="profile-section glass-card">
+                                        <div className="profile-section-header">
+                                            <h2>Watchlist</h2>
+                                            <span className="profile-section-count">{userProfile.wishlist.length} movies</span>
+                                        </div>
+                                        <div className="profile-section-body">
+                                            <div className="profile-wishlist-preview">
+                                                <p className="profile-wishlist-info">
+                                                    <i className="bi bi-bookmark"></i> You have {userProfile.wishlist.length} movies in your watchlist
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="profile-actions glass-card">
+                                    <button onClick={logout} className="profile-action-btn profile-action-secondary">
+                                        <i className="bi bi-box-arrow-right"></i>
+                                        <span>Sign Out</span>
                                     </button>
-                                    <button onClick={handleDeleteAccount} className="btn-secondary sign-out-btn glass-danger" style={{ width: 'fit-content', padding: '0.75rem 2rem', border: 'none' }}>
-                                        <i className="bi bi-trash3" style={{ marginRight: '0.5rem' }}></i> Delete Account
+                                    <button onClick={handleDeleteAccount} className="profile-action-btn profile-action-danger">
+                                        <i className="bi bi-trash3"></i>
+                                        <span>Delete Account</span>
                                     </button>
                                 </div>
                             </div>

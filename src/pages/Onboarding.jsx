@@ -96,7 +96,7 @@ export default function Onboarding() {
                     <div>
                         <div style={{ marginBottom: '2.5rem' }}>
                             <h2 className="text-gradient-gold" style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Complete Profile</h2>
-                            <p className="text-secondary" style={{ fontSize: '1rem' }}>Let's personalize your PlotTwist experience before we dive in.</p>
+                            <p className="text-secondary" style={{ fontSize: '1rem' }}>Let's personalize your CINevo experience before we dive in.</p>
                         </div>
 
                         {error && <div style={{ color: '#dc3545', marginBottom: '1rem' }}>{error}</div>}

@@ -10,9 +10,9 @@
   --bg-secondary: #121216;
   --bg-tertiary: #1c1c22;
   
-  --accent-gold: #f5c518; /* IMDb style cinematic gold */
-  --accent-gold-hover: #e0b416;
-  --accent-gold-glow: rgba(245, 197, 24, 0.4);
+  --accent-gold: #9333ea; /* CINevo purple */
+  --accent-gold-hover: #7c3aed;
+  --accent-gold-glow: rgba(147, 51, 234, 0.4);
   
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
@@ -106,8 +106,9 @@ a:hover {
 }
 
 .logo-twist {
-  background: linear-gradient(135deg, #f5c518 0%, #ff8c00 50%, #f5c518 100%);
+  background: linear-gradient(135deg, #c084fc 0%, #9333ea 50%, #6d28d9 100%);
   background-size: 200% auto;
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-size: 2.1rem;
@@ -117,12 +118,12 @@ a:hover {
   margin-left: -2px;
   line-height: 0.8;
   padding-right: 4px;
-  filter: drop-shadow(0 4px 12px rgba(245,197,24,0.3));
+  filter: drop-shadow(0 4px 12px rgba(147, 51, 234, 0.35));
   transition: all 0.3s ease;
 }
 
 .brand-logo-text:hover .logo-twist {
-  filter: drop-shadow(0 6px 18px rgba(245,197,24,0.6));
+  filter: drop-shadow(0 6px 18px rgba(147, 51, 234, 0.65));
   animation: shine 2s linear infinite;
 }
 
@@ -162,7 +163,7 @@ a:hover {
 .btn-primary:hover {
   transform: translateY(-2px);
   background-color: var(--accent-gold-hover);
-  box-shadow: 0 6px 20px rgba(245, 197, 24, 0.6);
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.6);
   color: #000;
 }
 
@@ -215,7 +216,7 @@ a:hover {
 }
 
 .text-gradient-gold {
-  background: linear-gradient(135deg, #f5c518 0%, #f9e076 100%);
+  background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

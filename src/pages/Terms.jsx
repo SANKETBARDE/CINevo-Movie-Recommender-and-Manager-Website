@@ -10,13 +10,13 @@ export default function Terms() {
             <div className="glass-panel content-panel mb-8 p-6 sm:p-10">
                 <h3 className="text-gradient-gold mb-4" style={{ fontSize: '1.8rem' }}>1. Acceptance of Terms</h3>
                 <p className="mb-6 text-secondary" style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
-                    By accessing and using PlotTwist, you accept and agree to be bound by the terms and provision of this agreement. 
+                    By accessing and using CINevo, you accept and agree to be bound by the terms and provision of this agreement. 
                     If you do not agree to abide by the above, please do not use this service.
                 </p>
 
                 <h3 className="text-gradient-gold mb-4" style={{ fontSize: '1.8rem' }}>2. Use of Service</h3>
                 <p className="mb-6 text-secondary" style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
-                    PlotTwist is provided for your personal, non-commercial use. You may use our platform to discover movies, 
+                    CINevo is provided for your personal, non-commercial use. You may use our platform to discover movies, 
                     track your watchlists, and interact with community features. You agree not to misuse the service or help anyone else do so.
                 </p>
 
@@ -28,7 +28,7 @@ export default function Terms() {
 
                 <h3 className="text-gradient-gold mb-4" style={{ fontSize: '1.8rem' }}>4. Data & API Usage</h3>
                 <p className="mb-6 text-secondary" style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
-                    PlotTwist uses the TMDb API for movie data but is not endorsed or certified by TMDb. 
+                    CINevo uses the TMDb API for movie data but is not endorsed or certified by TMDb. 
                     All movie data, posters, and related content are the property of their respective owners.
                 </p>
 

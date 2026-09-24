@@ -82,8 +82,8 @@ export default function Navbar() {
                     <div className="mobile-brand-container">
                         <Link className="flex items-center" to="/" style={{ textDecoration: 'none' }}>
                             <span className="brand-logo-text">
-                                <span className="logo-plot">Plot</span>
-                                <span className="logo-twist">twist</span>
+                                <span className="logo-plot">CIN</span>
+                                <span className="logo-twist">evo</span>
                             </span>
                         </Link>
                         

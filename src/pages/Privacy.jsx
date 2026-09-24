@@ -10,13 +10,13 @@ export default function Privacy() {
             <div className="glass-panel content-panel mb-8 p-6 sm:p-10">
                 <h3 className="text-gradient-gold mb-4" style={{ fontSize: '1.8rem' }}>1. Information We Collect</h3>
                 <p className="mb-6 text-secondary" style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
-                    When you sign in to PlotTwist, we collect basic profile information provided by Google (such as your name and email address) 
+                    When you sign in to CINevo, we collect basic profile information provided by Google (such as your name and email address) 
                     and the data you explicitly provide to us, such as your movie watchlists, ratings, and preferences.
                 </p>
 
                 <h3 className="text-gradient-gold mb-4" style={{ fontSize: '1.8rem' }}>2. How We Use Your Information</h3>
                 <p className="mb-6 text-secondary" style={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
-                    The information we collect is used solely to provide and improve the PlotTwist experience. 
+                    The information we collect is used solely to provide and improve the CINevo experience. 
                     We use your preferences to generate personalized movie recommendations and keep your watchlist synced across devices.
                 </p>
 

@@ -63,7 +63,7 @@ export default function Wishlist() {
                             background: 'rgba(255,255,255,0.03)',
                             borderRadius: '16px',
                             border: '1px solid rgba(255,255,255,0.08)',
-                            boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 50px rgba(245, 197, 24, 0.05)',
+                            boxShadow: '0 20px 40px rgba(0,0,0,0.6), 0 0 50px rgba(147, 51, 234, 0.05)',
                             marginBottom: '3rem',
                             transform: 'rotate(-2deg)',
                         }}>
@@ -76,7 +76,7 @@ export default function Wishlist() {
                                 position: 'absolute',
                                 top: '-15px',
                                 right: '-15px',
-                                background: 'linear-gradient(135deg, #f5c518, #ff8c00)',
+                                background: 'linear-gradient(135deg, #c084fc, #7c3aed)',
                                 color: 'black',
                                 width: '45px',
                                 height: '45px',
@@ -86,7 +86,7 @@ export default function Wishlist() {
                                 justifyContent: 'center',
                                 fontWeight: '900',
                                 fontSize: '1.8rem',
-                                boxShadow: '0 4px 15px rgba(245, 197, 24, 0.4)'
+                                boxShadow: '0 4px 15px rgba(147, 51, 234, 0.4)'
                             }}>?</div>
                         </div>
 
@@ -123,7 +123,7 @@ export default function Wishlist() {
                             fontWeight: '700',
                             textTransform: 'uppercase',
                             letterSpacing: '1px',
-                            boxShadow: '0 8px 20px rgba(245, 197, 24, 0.25)',
+                            boxShadow: '0 8px 20px rgba(147, 51, 234, 0.25)',
                             transition: 'all 0.3s ease'
                         }}>
                             <i className="bi bi-film" style={{ marginRight: '8px' }}></i> Find Your Next Twist

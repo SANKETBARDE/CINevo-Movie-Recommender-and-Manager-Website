@@ -18,12 +18,12 @@ export default function About() {
                     <div className="glass-panel content-panel">
                         <h3 className="text-gradient-gold mb-4" style={{ fontSize: '2rem' }}>Our Mission</h3>
                         <p className="mb-4 text-secondary" style={{ fontSize: '1.1rem' }}>
-                            At PlotTwist, our core mission is simple: to make sure you never forget a movie you wanted to
+                            At CINevo, our core mission is simple: to make sure you never forget a movie you wanted to
                             watch. We all know the frustration of scrolling through endless titles, trying to remember that one
                             film you saw a trailer for weeks ago.
                         </p>
                         <p className="mb-4 text-secondary" style={{ fontSize: '1.1rem' }}>
-                            PlotTwist is built to be your personal cinematic memory—a place where every intriguing discovery
+                            CINevo is built to be your personal cinematic memory—a place where every intriguing discovery
                             is saved instantly to your wishlist, ready for your next movie night.
                         </p>
                         <p className="text-secondary" style={{ fontSize: '1.1rem' }}>
@@ -39,11 +39,11 @@ export default function About() {
             </div>
             
             <div className="team-card glass-panel mb-8">
-                <img src="/assets/dev/sanket.png" className="team-photo" alt="Sanket Barde" onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Sanket+Barde&background=f5c518&color=000&size=150' }} />
+                <img src="/assets/dev/sanket.png" className="team-photo" alt="Sanket Barde" onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Sanket+Barde&background=9333ea&color=fff&size=150' }} />
                 <h3 className="text-gradient-gold" style={{ fontSize: '1.8rem' }}>Sanket Barde</h3>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', fontWeight: '500' }}>Founder & Lead Developer</p>
                 <p style={{ color: 'var(--text-tertiary)' }}>
-                    Sanket Barde is the Founder and Lead Developer of PlotTwist, architecting the platform from the
+                    Sanket Barde is the Founder and Lead Developer of CINevo, architecting the platform from the
                     ground up. Based in Bangalore, he blends technical expertise in web development with a
                     deep love for cinema. Sanket is committed to delivering a fast, smart, and seamless experience
                     that takes the guesswork out of movie discovery.

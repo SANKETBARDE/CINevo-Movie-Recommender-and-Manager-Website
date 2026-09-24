@@ -82,16 +82,16 @@ export default function FilterModal({ currentFilters, onApplyFilters }) {
                         <h5 className="modal-title" style={{ 
                             fontSize: '1.8rem', 
                             fontWeight: '800', 
-                            background: 'linear-gradient(135deg, #f5c518, #ff8c00)',
+                            background: 'linear-gradient(135deg, #c084fc, #7c3aed)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             margin: 0
                         }}>
-                            <i className="bi bi-funnel-fill" style={{ marginRight: '0.5rem', color: '#f5c518', WebkitTextFillColor: 'initial' }}></i> 
+                            <i className="bi bi-funnel-fill" style={{ marginRight: '0.5rem', color: '#9333ea', WebkitTextFillColor: 'initial' }}></i> 
                             Refine Your Search
                         </h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" style={{ 
-                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23f5c518'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e")`,
+                            backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%239333ea'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e")`,
                             opacity: '1'
                         }}></button>
                     </div>

@@ -30,7 +30,38 @@ function ScrollToTop() {
 }
 
 function App() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, loading } = useAuth();
+
+  // Show loading only during initial auth state check, not after login
+  if (loading && !user) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh',
+        background: '#050505',
+        flexDirection: 'column',
+        gap: '1rem'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '3px solid rgba(147, 51, 234, 0.3)',
+          borderTop: '3px solid #9333ea',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Loading...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   if (!user) {
       return (
@@ -53,26 +84,7 @@ function App() {
       );
   }
 
-  // Intercept user if they haven't completed their profile
-  if (!userProfile?.isProfileComplete) {
-      return (
-          <Router>
-              <ScrollToTop />
-              <div className="d-flex flex-column min-vh-100">
-                  <Navbar />
-                  <div className="main-content d-flex flex-column grow">
-                      <Routes>
-                          <Route path="/onboarding" element={<Onboarding />} />
-                          <Route path="/terms" element={<Terms />} />
-                          <Route path="/privacy" element={<Privacy />} />
-                          <Route path="*" element={<Navigate to="/onboarding" replace />} />
-                      </Routes>
-                  </div>
-                  <Footer />
-              </div>
-          </Router>
-      );
-  }
+
 
   return (
     <Router>
@@ -90,6 +102,7 @@ function App() {
                 <Route path="/search" element={<Search />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
