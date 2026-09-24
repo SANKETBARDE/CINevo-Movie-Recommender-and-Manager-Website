@@ -112,6 +112,11 @@ export default function Navbar() {
                             <i className="bi bi-search"></i>
                         </button>
                         
+                        {/* Android App Download Button */}
+                        <Link to="/android-download" className="android-download-btn" aria-label="Download Android App">
+                            <i className="fab fa-android"></i>
+                        </Link>
+                        
                         {user && (
                             <div className="profile-dropdown-container" style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => navigate('/profile')}>
 
@@ -144,6 +149,10 @@ export default function Navbar() {
                 <Link to="/wishlist" className={`bottom-nav-item ${isActive('/wishlist')}`}>
                     <i className={isActive('/wishlist') ? 'bi bi-heart-fill' : 'bi bi-heart'}></i>
                     <span>Wishlist</span>
+                </Link>
+                <Link to="/android-download" className={`bottom-nav-item ${isActive('/android-download')}`}>
+                    <i className="fab fa-android"></i>
+                    <span>App</span>
                 </Link>
                 {user ? (
                     <Link to="/profile" className={`bottom-nav-item ${isActive('/profile')}`}>
